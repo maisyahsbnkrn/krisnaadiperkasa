@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_duty" pageWidth="595" pageHeight="842" columnWidth="540" leftMargin="35" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7a86d0ee-b2a7-40d2-9adf-91d8da8af878">
+	<property name="ireport.zoom" value="1.6105100000000014"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="346"/>
+	<property name="ireport.background.image" value="D:\01. Project\Vessel\background_kresna.png"/>
+	<property name="ireport.background.image.properties" value="false,true,0.25,0,0,0,0,0,0"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean($V{REPORT_COUNT}.intValue()%2==0)]]></conditionExpression>
+			<style backcolor="#EFF7FF"/>
+		</conditionalStyle>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="equipment_part" uuid="4d239567-354b-4054-b6aa-4fd84e572f73">
+		<queryString>
+			<![CDATA[select task_equipment_name as name,task_equipment_type as type
+from task_equipment where task_equipment.order_number_task = '2019-001.220-AII']]>
+		</queryString>
+		<field name="name" class="java.lang.String"/>
+		<field name="type" class="java.lang.String"/>
+	</subDataset>
+	<subDataset name="equipment_sparepart" uuid="eceba1ed-398f-4fcd-b4d0-efe05c110483">
+		<queryString language="SQL">
+			<![CDATA[select task_equipment_name as name,task_equipment_type as type
+from task_equipment where task_equipment.order_number_task = '2019-001.220-AII'
+UNION
+select task_sparepart_name as name,task_sparepart_type as type
+from task_sparepart where task_sparepart.order_number_task = '2019-001.220-AII']]>
+		</queryString>
+		<field name="name" class="java.lang.String">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<field name="type" class="java.lang.String">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+	</subDataset>
+	<subDataset name="dataset1" uuid="42aad3fe-5fb2-49dd-9ee9-a8a6d85be13b"/>
+	<parameter name="order_number" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\xampp5\\htdocs\\vessel\\application\\views\\reports\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="date_current" class="java.lang.String"/>
+	<parameter name="user_login" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select company.name as company, ship.ship_name as ship,ship.pic as pic,ship.contact_number as contact_number,ship_task.order_number as order_number,
+ship_task.location as location,ship_task.scope_type as scope_type,ship_task.engineer as engineer,
+ship_task.survey_type as survey_type,
+aauth_users.position as position,
+task_equipment.task_equipment_name as equipment_name,task_equipment.task_equipment_type as equipment_type
+from  ship_task left join company on ship_task.company = company.id_company
+left join ship on ship_task.ship_name = ship.id_ship
+left join aauth_users on ship_task.engineer = aauth_users.full_name
+left join task_equipment on task_equipment.order_number_task = ship_task.order_number
+where ship_task.order_number = '$P{order_number}'
+UNION
+select company.name as company, ship.ship_name as ship,ship.pic as pic,ship.contact_number as contact_number,ship_task.order_number as order_number,
+ship_task.location as location,ship_task.scope_type as scope_type,ship_task.engineer as engineer,
+ship_task.survey_type as survey_type,
+aauth_users.position as position,
+task_sparepart.task_sparepart_name as sparepart_name,task_sparepart.task_sparepart_type as sparepart_type
+from  ship_task left join company on ship_task.company = company.id_company
+left join ship on ship_task.ship_name = ship.id_ship
+left join aauth_users on ship_task.engineer = aauth_users.full_name
+left join task_sparepart on task_sparepart.order_number_task = ship_task.order_number
+where ship_task.order_number = '$P{order_number}']]>
+	</queryString>
+	<field name="company" class="java.lang.String"/>
+	<field name="ship" class="java.lang.String"/>
+	<field name="order_number" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="location" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="scope_type" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="engineer" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="survey_type" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="position" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="equipment_name" class="java.lang.String"/>
+	<field name="equipment_type" class="java.lang.String"/>
+	<field name="pic" class="java.lang.String"/>
+	<field name="contact_number" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="42" splitType="Stretch">
+			<image>
+				<reportElement x="0" y="0" width="264" height="42" uuid="5428846f-5afc-4a49-b4b5-269a95b50d31"/>
+				<imageExpression><![CDATA["http://vessel.kresnaadikarsa.co.id/asset/img/kresna_logo.jpg"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="426" y="0" width="126" height="42" uuid="58d25b0e-8072-43d2-b102-d3e76ade5abc"/>
+				<imageExpression><![CDATA["http://vessel.kresnaadikarsa.co.id/asset/img/jrc_logo.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="414" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="42" width="555" height="20" uuid="7a70ec9a-c831-493d-9786-53d7e070db9a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Cambria" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LETTER OF DUTIES]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="61" width="555" height="20" uuid="b5437143-6f20-4839-96cf-253f4160c132"/>
+				<textElement textAlignment="Center">
+					<font fontName="Cambria" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["KA/ST/"+$F{order_number}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="106" width="555" height="20" uuid="2c8694ee-eeb1-43d1-8108-58b412c00b8a"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[The under Signed is :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="126" width="66" height="20" uuid="c4a557c8-ca61-403b-ba03-854384856aa6"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="66" y="126" width="12" height="20" uuid="4cd423dd-026b-43c4-9f1b-dc13a97ad4e1"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="146" width="66" height="20" uuid="c6dd3fa4-1c2b-4fc7-87bc-40db2de19631"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[Position]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="66" y="146" width="12" height="20" uuid="94e0ae9b-eeb8-4512-92b7-5aadb88013d5"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="78" y="146" width="477" height="20" uuid="b8d0550b-99eb-4d00-9beb-d32c91d55342"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[Service Adminitration]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="78" y="166" width="330" height="33" uuid="f12980ec-c917-401f-96a6-f6d14403e642"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[Kalibata indah No. 9AM, Jl. Rawajati Timur
+Pancoran – Jakarta Selatan
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="66" y="166" width="12" height="20" uuid="a424764a-a437-4ab1-8d88-3568d2f3cc65"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="166" width="66" height="20" uuid="7e5d5e63-ba94-41c6-a717-7e5d32d36622"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[Address]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="208" width="555" height="20" uuid="448e12c6-a26a-4792-b808-e427c2e52fb2"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[Assign the name below :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="228" width="66" height="20" uuid="ff205da2-6073-4328-85fa-1549a1a9b3f6"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="66" y="228" width="12" height="20" uuid="bab9a2e1-4741-4231-bcf6-3e6a4592d677"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="66" y="248" width="12" height="20" uuid="123380f6-ee10-4341-aa4d-c1570c822a0f"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="248" width="66" height="20" uuid="1d227b96-3791-4253-96a4-aaef7fba8627"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[Position]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="78" y="228" width="477" height="20" uuid="8d0775d2-d97b-4f7d-83ea-4dbb7deb351e"/>
+				<textElement>
+					<font fontName="Cambria" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{engineer}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="78" y="248" width="477" height="20" uuid="39a7f1c0-d281-44fc-b10d-7d1505d9b0f5"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{position}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="285" width="555" height="20" uuid="96432b42-9f6a-41cc-a9a3-7caab338de37"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[From PT. KRESNA ADIKARSA (JRC, Agent Indonesia) some jobs for Vessel : ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="305" width="555" height="20" uuid="389a4717-a70c-4410-ae5f-977a7f511ee9"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ship} +" ( "+$F{order_number} +") At " +$F{location} + " asf :"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="325" width="107" height="20" uuid="3c4e25a5-99e7-4ff4-b4df-2460d62083e2"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[Scope of work]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="107" y="325" width="12" height="20" uuid="f0ec011f-736e-40fd-a081-3a112fef77ed"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="119" y="325" width="436" height="20" uuid="cd49b285-f41c-467d-8623-b5f2953e45f8"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{scope_type}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="107" y="345" width="12" height="20" uuid="874a418d-263f-48ca-a699-d169bcf36db9"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="345" width="107" height="20" uuid="4c1390c3-2d0f-4c07-b06a-b777bce4f45e"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[Survey type]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="119" y="345" width="436" height="20" uuid="f506510f-2ca7-4276-85f4-fae9c5af5a9f"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{survey_type}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="365" width="107" height="20" uuid="eeeb65d8-309d-428c-a583-266d07b53887"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[Pic of ship]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="107" y="365" width="12" height="20" uuid="9b37eba4-9a34-4902-94bb-70d29f4fc00d"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="119" y="365" width="436" height="20" uuid="b9aa6e7f-1902-4f0d-9442-2e236e5ec613"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pic}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="386" width="107" height="20" uuid="206a9ce6-18c4-43f0-97f0-8d947c7bf311"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[Contact number]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="119" y="386" width="436" height="20" uuid="fc0bdea6-9297-4fc4-adfe-5ab05d363b51"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{contact_number}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="107" y="386" width="12" height="20" uuid="a36706cf-4234-49b6-9528-6b15f974429d"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="78" y="126" width="330" height="20" uuid="9b634b59-810b-40b0-8984-f2d0d8543c4f"/>
+				<textElement>
+					<font fontName="Cambria" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{user_login}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="59">
+			<staticText>
+				<reportElement x="0" y="15" width="555" height="20" uuid="db44279f-1743-4b65-aa27-34e516b03ba1"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[Equipment / Sparepart Description :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="38" width="277" height="20" backcolor="#00FFFF" uuid="db1d9d5c-86be-438b-ac03-3ff4e11e0521"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Cambria" size="10"/>
+				</textElement>
+				<text><![CDATA[Equipment / Sparepart Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="278" y="38" width="277" height="20" backcolor="#00FFFF" uuid="4adc7b81-fba5-4d1f-a4a3-d9e5204a301c"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Cambria" size="10"/>
+				</textElement>
+				<text><![CDATA[Equipment / Sparepart Type]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<textField>
+				<reportElement mode="Opaque" x="0" y="1" width="277" height="20" backcolor="#CCFFFF" uuid="89b0975b-9814-4b63-9b3b-87e3c11e08e9"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Cambria" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" "+$F{equipment_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Opaque" x="278" y="1" width="277" height="20" backcolor="#CCFFFF" uuid="6ed0911c-d2ab-4d84-bf1b-cc600df2c069"/>
+				<box>
+					<leftPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Cambria" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" "+$F{equipment_type}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="170">
+			<staticText>
+				<reportElement x="-1" y="11" width="555" height="20" uuid="d00ab75d-b515-42c6-b2f8-4d89c57c6818"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[The letter assignment is made to be used properly.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="38" width="49" height="20" uuid="b51e41ee-3a7f-4499-8503-d6cf32db48a2"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[Jakarta, ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="58" width="555" height="20" uuid="5fcd916e-f59f-4eac-a907-aa6c7dc609f7"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<text><![CDATA[PT. KRESNA ADIKARSA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="128" width="555" height="20" uuid="d93f1e98-6b55-49dc-aee4-ae989fcb9efc"/>
+				<textElement>
+					<font fontName="Cambria" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ayu widi hapsari]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="45" y="38" width="159" height="20" uuid="59030c30-b87d-47ac-a6cd-d94da4b2edb4"/>
+				<textElement>
+					<font fontName="Cambria" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{date_current}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="45" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="7" width="552" height="38" uuid="383f15e5-15f6-472c-9ea9-b7c5d2009035"/>
+				<textElement>
+					<font fontName="Cambria" size="8"/>
+				</textElement>
+				<text><![CDATA[Head office :
+Kalibata Indah No.9AM, Jl. Rawa Jati Timur – Pancoran Jakarta Selatan 12750
+Telp. +62 21 – 7991 909 (Hunting), 703 02071, Fax : +62 21 – 7991 930
+Website: www.kresnaadikarsa.co.id and e-mail: jrm@cbn.net.id / marketing@kresnaadikarsa.co.id
+]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="5" width="555" height="1" forecolor="#0099FF" uuid="a1f0d817-a434-4355-80cf-994fdafbeba7"/>
+			</line>
+		</band>
+	</pageFooter>
+</jasperReport>

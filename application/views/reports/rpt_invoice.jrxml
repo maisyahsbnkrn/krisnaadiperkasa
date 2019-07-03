@@ -1,0 +1,562 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_invoice" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="98b4f61e-acf4-4f26-a8af-e42c68513b19">
+	<property name="ireport.zoom" value="1.4641000000000024"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="249"/>
+	<parameter name="order_number" class="java.lang.String"/>
+	<parameter name="date_current" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+case when company.territory = 1 then 'USD (Dollar)' else 'IDR (Rupiah)' end as currency,
+company.name as company,
+ship.ship_name as ship,
+ship_task.order_number as order_number,
+ship_task.schedule as schedule,
+cast(ship_task.survey_engineer_fee + ship_task.installation_engineer_fee + ship_task.repair_engineer_fee as decimal(11,2)) as engineer_fee,
+cast(ship_task.survey_dailyallowance_fee + ship_task.installation_dailyallowance_fee + ship_task.repair_dailyallowance_fee as decimal(11,2)) as dailyallowance_fee,
+cast(ship_task.survey_speedboat_fee + ship_task.installation_speedboat_fee + ship_task.repair_speedboat_fee as decimal(11,2)) as speedboat_fee,
+cast(ship_task.survey_ticket_fee + ship_task.installation_ticket_fee + ship_task.repair_ticket_fee as decimal(11,2)) as ticket_fee,
+cast( IFNULL(accomodation_fee.fee, ship_task.survey_transport_fee) + IFNULL(accomodation_fee.fee, ship_task.installation_transport_fee) + IFNULL(accomodation_fee.fee, ship_task.repair_transport_fee) as decimal(11,2)) as transport_fee,
+cast(ship_task.survey_engineer_fee + ship_task.survey_dailyallowance_fee + ship_task.survey_speedboat_fee + ship_task.survey_ticket_fee + ship_task.survey_transport_fee +
+ship_task.installation_engineer_fee + ship_task.installation_dailyallowance_fee + ship_task.installation_speedboat_fee + ship_task.installation_ticket_fee + ship_task.installation_transport_fee +
+ship_task.repair_engineer_fee + ship_task.repair_dailyallowance_fee + ship_task.repair_speedboat_fee + ship_task.repair_ticket_fee + ship_task.repair_transport_fee as decimal(11,2)) as subtotal_personil,
+cast((ship_task.survey_engineer_fee + ship_task.survey_dailyallowance_fee + ship_task.survey_speedboat_fee + ship_task.survey_ticket_fee + ship_task.survey_transport_fee +
+ship_task.installation_engineer_fee + ship_task.installation_dailyallowance_fee + ship_task.installation_speedboat_fee + ship_task.installation_ticket_fee + ship_task.installation_transport_fee +
+ship_task.repair_engineer_fee + ship_task.repair_dailyallowance_fee + ship_task.repair_speedboat_fee + ship_task.repair_ticket_fee + ship_task.repair_transport_fee)*0.1 as decimal(11,2)) as ppn,
+cast((ship_task.survey_engineer_fee + ship_task.survey_dailyallowance_fee + ship_task.survey_speedboat_fee + ship_task.survey_ticket_fee + ship_task.survey_transport_fee +
+ship_task.installation_engineer_fee + ship_task.installation_dailyallowance_fee + ship_task.installation_speedboat_fee + ship_task.installation_ticket_fee + ship_task.installation_transport_fee +
+ship_task.repair_engineer_fee + ship_task.repair_dailyallowance_fee + ship_task.repair_speedboat_fee + ship_task.repair_ticket_fee + ship_task.repair_transport_fee)
++ ((ship_task.survey_engineer_fee + ship_task.survey_dailyallowance_fee + ship_task.survey_speedboat_fee + ship_task.survey_ticket_fee + ship_task.survey_transport_fee +
+ship_task.installation_engineer_fee + ship_task.installation_dailyallowance_fee + ship_task.installation_speedboat_fee + ship_task.installation_ticket_fee + ship_task.installation_transport_fee +
+ship_task.repair_engineer_fee + ship_task.repair_dailyallowance_fee + ship_task.repair_speedboat_fee + ship_task.repair_ticket_fee + ship_task.repair_transport_fee)*0.1) as decimal(11,2))as grand_total,
+task_equipment.task_equipment_name as task_equipment_name,
+task_equipment.task_equipment_type as task_equipment_type,
+cast(logistic_equipment.price as decimal(11,2)) as price,
+task_equipment.task_equipment_quantity as quantity
+from ship_task
+left join company on ship_task.company = company.id_company
+left join ship on ship_task.ship_name = ship.id_ship
+left join task_equipment on ship_task.order_number = task_equipment.order_number_task
+left join logistic_equipment on task_equipment.task_equipment_name = logistic_equipment.logistic_equipment_name and
+task_equipment.task_equipment_type = logistic_equipment.logistic_equipment_type and
+task_equipment.task_equipment_maker = logistic_equipment.logistic_maker
+left join accomodation_fee on ship_task.company = accomodation_fee.company and lower(ship_task.location) = lower(accomodation_fee.location)
+where ship_task.order_number='$P{order_number}'
+UNION ALL
+select
+case when company.territory = 1 then 'USD (Dollar)' else 'IDR (Rupiah)' end as currency,
+company.name as company,
+ship.ship_name as ship,
+ship_task.order_number as order_number,
+ship_task.schedule as schedule,
+cast(ship_task.survey_engineer_fee + ship_task.installation_engineer_fee + ship_task.repair_engineer_fee as decimal(11,2)) as engineer_fee,
+cast(ship_task.survey_dailyallowance_fee + ship_task.installation_dailyallowance_fee + ship_task.repair_dailyallowance_fee as decimal(11,2)) as dailyallowance_fee,
+cast(ship_task.survey_speedboat_fee + ship_task.installation_speedboat_fee + ship_task.repair_speedboat_fee as decimal(11,2)) as speedboat_fee,
+cast(ship_task.survey_ticket_fee + ship_task.installation_ticket_fee + ship_task.repair_ticket_fee as decimal(11,2)) as ticket_fee,
+cast( IFNULL(accomodation_fee.fee, ship_task.survey_transport_fee) + IFNULL(accomodation_fee.fee, ship_task.installation_transport_fee) + IFNULL(accomodation_fee.fee, ship_task.repair_transport_fee) as decimal(11,2)) as transport_fee,
+cast(ship_task.survey_engineer_fee + ship_task.survey_dailyallowance_fee + ship_task.survey_speedboat_fee + ship_task.survey_ticket_fee + ship_task.survey_transport_fee +
+ship_task.installation_engineer_fee + ship_task.installation_dailyallowance_fee + ship_task.installation_speedboat_fee + ship_task.installation_ticket_fee + ship_task.installation_transport_fee +
+ship_task.repair_engineer_fee + ship_task.repair_dailyallowance_fee + ship_task.repair_speedboat_fee + ship_task.repair_ticket_fee + ship_task.repair_transport_fee as decimal(11,2)) as subtotal_personil,
+cast((ship_task.survey_engineer_fee + ship_task.survey_dailyallowance_fee + ship_task.survey_speedboat_fee + ship_task.survey_ticket_fee + ship_task.survey_transport_fee +
+ship_task.installation_engineer_fee + ship_task.installation_dailyallowance_fee + ship_task.installation_speedboat_fee + ship_task.installation_ticket_fee + ship_task.installation_transport_fee +
+ship_task.repair_engineer_fee + ship_task.repair_dailyallowance_fee + ship_task.repair_speedboat_fee + ship_task.repair_ticket_fee + ship_task.repair_transport_fee)*0.1 as decimal(11,2)) as ppn,
+cast((ship_task.survey_engineer_fee + ship_task.survey_dailyallowance_fee + ship_task.survey_speedboat_fee + ship_task.survey_ticket_fee + ship_task.survey_transport_fee +
+ship_task.installation_engineer_fee + ship_task.installation_dailyallowance_fee + ship_task.installation_speedboat_fee + ship_task.installation_ticket_fee + ship_task.installation_transport_fee +
+ship_task.repair_engineer_fee + ship_task.repair_dailyallowance_fee + ship_task.repair_speedboat_fee + ship_task.repair_ticket_fee + ship_task.repair_transport_fee)
++ ((ship_task.survey_engineer_fee + ship_task.survey_dailyallowance_fee + ship_task.survey_speedboat_fee + ship_task.survey_ticket_fee + ship_task.survey_transport_fee +
+ship_task.installation_engineer_fee + ship_task.installation_dailyallowance_fee + ship_task.installation_speedboat_fee + ship_task.installation_ticket_fee + ship_task.installation_transport_fee +
+ship_task.repair_engineer_fee + ship_task.repair_dailyallowance_fee + ship_task.repair_speedboat_fee + ship_task.repair_ticket_fee + ship_task.repair_transport_fee)*0.1) as decimal(11,2))as grand_total,
+task_sparepart.task_sparepart_name as task_sparepart_name,
+task_sparepart.task_sparepart_type as task_sparepart_type,
+cast(logistic_sparepart.price as decimal(11,2)) as price,
+task_sparepart.task_sparepart_quantity as quantity
+from ship_task
+left join company on ship_task.company = company.id_company
+left join ship on ship_task.ship_name = ship.id_ship
+left join task_sparepart on ship_task.order_number = task_sparepart.order_number_task
+left join logistic_sparepart on  task_sparepart.task_equipment_sparepart_name = logistic_sparepart.logistic_sparepart_equipment_name and
+task_sparepart.task_equipment_sparepart_type = logistic_sparepart.logistic_sparepart_equipment_type and
+task_sparepart.task_equipment_sparepart_maker = logistic_sparepart.logistic_sparepart_equipment_maker and
+task_sparepart.task_sparepart_name = logistic_sparepart.logistic_sparepart_name and
+task_sparepart.task_sparepart_type = logistic_sparepart.logistic_sparepart_type
+left join accomodation_fee on ship_task.company = accomodation_fee.company and lower(ship_task.location) = lower(accomodation_fee.location)
+where ship_task.order_number='$P{order_number}'
+order by task_equipment_name desc;]]>
+	</queryString>
+	<field name="currency" class="java.lang.String"/>
+	<field name="company" class="java.lang.String"/>
+	<field name="ship" class="java.lang.String"/>
+	<field name="order_number" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="schedule" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="engineer_fee" class="java.math.BigDecimal"/>
+	<field name="dailyallowance_fee" class="java.math.BigDecimal"/>
+	<field name="speedboat_fee" class="java.math.BigDecimal"/>
+	<field name="ticket_fee" class="java.math.BigDecimal"/>
+	<field name="transport_fee" class="java.math.BigDecimal"/>
+	<field name="subtotal_personil" class="java.math.BigDecimal"/>
+	<field name="ppn" class="java.math.BigDecimal"/>
+	<field name="grand_total" class="java.math.BigDecimal"/>
+	<field name="task_equipment_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="task_equipment_type" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="price" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="quantity" class="java.lang.Integer"/>
+	<variable name="price_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{price}]]></variableExpression>
+	</variable>
+	<variable name="price_2" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{price}+$F{subtotal_personil}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="55" splitType="Stretch">
+			<image>
+				<reportElement x="2" y="10" width="264" height="42" uuid="18b18063-f961-4952-bd12-1ecbdf5aceac"/>
+				<imageExpression><![CDATA["http://vessel.kresnaadikarsa.co.id/asset/img/kresna_logo.jpg"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="428" y="10" width="126" height="42" uuid="363e2dea-ef75-4b5d-9209-62aabe8e92fb"/>
+				<imageExpression><![CDATA["http://vessel.kresnaadikarsa.co.id/asset/img/jrc_logo.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="155" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="6" width="555" height="20" uuid="370e717d-1f5e-421b-ae02-0f5ca7cca1e4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Cambria" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DRAFT INVOICES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="35" width="76" height="18" uuid="2fea1f4b-d87a-4c74-bed3-d1d3ae1f8db8"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Cambria" size="10"/>
+				</textElement>
+				<text><![CDATA[ORDER NO ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="93" y="35" width="12" height="18" uuid="e1b6e978-5577-439a-a65d-79951559d035"/>
+				<textElement>
+					<font fontName="Cambria" size="10"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="54" width="76" height="18" uuid="10b26ae6-ca5f-49a7-86d0-6cbe298055b6"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Cambria" size="10"/>
+				</textElement>
+				<text><![CDATA[ORDER BY ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="93" y="54" width="12" height="18" uuid="57f113d8-63ce-4f60-ac00-6914bc83b904"/>
+				<textElement>
+					<font fontName="Cambria" size="10"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="74" width="76" height="18" uuid="f1e5bedd-6623-452b-bbfa-3f12e18cff63"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Cambria" size="10"/>
+				</textElement>
+				<text><![CDATA[SHIP NAME ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="93" y="74" width="12" height="18" uuid="9f268888-e7b7-4480-8796-c5e456f49b7e"/>
+				<textElement>
+					<font fontName="Cambria" size="10"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="92" width="76" height="18" uuid="2be47cd8-4827-468c-a5d7-a193a2d34fa7"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Cambria" size="10"/>
+				</textElement>
+				<text><![CDATA[DATE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="93" y="92" width="12" height="18" uuid="b677d0d9-bf1b-4bab-a612-659e3ccb6453"/>
+				<textElement>
+					<font fontName="Cambria" size="10"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="118" y="36" width="428" height="18" uuid="22fbe5eb-ca86-4212-b9bf-cebea7fc0d47"/>
+				<textElement>
+					<font fontName="Cambria" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{order_number}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="118" y="72" width="428" height="18" uuid="20bc102f-a0fa-4837-a573-6e9d0ad1a984"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Cambria" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ship}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="118" y="93" width="428" height="18" uuid="123e02e0-5600-4a61-8b90-ba8c093a92e4"/>
+				<textElement>
+					<font fontName="Cambria" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{schedule}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="118" y="54" width="428" height="18" uuid="e90411e8-d667-4698-8851-c755a4648f57"/>
+				<textElement>
+					<font fontName="Cambria" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{company}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="2" y="134" width="256" height="20" backcolor="#33CCFF" uuid="bd9a3b3c-0e31-4059-bc7e-b1d446bff98a"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Cambria" size="10" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[BILLING INFORMATION DETAILS  ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="93" y="112" width="12" height="18" uuid="fbcbc8b9-98a4-423e-858a-418c4b73a9a1"/>
+				<textElement>
+					<font fontName="Cambria" size="10"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="118" y="113" width="428" height="18" uuid="acc420d0-9bc4-4347-b84f-a0feac170394"/>
+				<textElement>
+					<font fontName="Cambria" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{currency}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="2" y="112" width="76" height="18" uuid="5622a7fd-45db-4dea-a3f0-afc0dc1a920b"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Cambria" size="10"/>
+				</textElement>
+				<text><![CDATA[CURRENCY]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="197" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="2" y="176" width="201" height="20" backcolor="#33CCFF" uuid="934edbbd-190d-40a6-bf63-af48d62f136f"/>
+				<box>
+					<bottomPen lineWidth="0.0" lineStyle="Double"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Cambria" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Name Equipment / Part]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="205" y="176" width="135" height="20" backcolor="#33CCFF" uuid="c1a54a68-e6b5-4369-b115-59f9ff2ea98d"/>
+				<box>
+					<bottomPen lineWidth="0.0" lineStyle="Double"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Cambria" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Type]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="342" y="176" width="53" height="20" backcolor="#33CCFF" uuid="67564b35-193d-42ce-a6a7-bfe278087f66"/>
+				<box>
+					<bottomPen lineWidth="0.0" lineStyle="Double"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Cambria" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Quantity]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="156" width="199" height="20" uuid="22357d06-7110-4164-8ef9-9a220f1bd60f"/>
+				<textElement>
+					<font fontName="Cambria" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[II. Equipment and Sparepart Costs]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="2" width="199" height="20" uuid="019caa7d-f8f9-4cfe-bf5d-d794a1c3f200"/>
+				<textElement>
+					<font fontName="Cambria" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[I. Personnel Costs]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="383" y="43" width="127" height="20" backcolor="#CCFFFF" uuid="cf143054-c4f3-461e-8410-0c94ab2637fb"/>
+				<textElement textAlignment="Right">
+					<font fontName="Cambria"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{engineer_fee}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="2" y="22" width="380" height="20" backcolor="#33CCFF" uuid="9d83b477-1136-4266-ba85-7e303bb2d1b4"/>
+				<box>
+					<bottomPen lineWidth="0.0" lineStyle="Double"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Cambria" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Description]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="383" y="22" width="127" height="20" backcolor="#33CCFF" uuid="709845f9-d8a6-4718-a43d-d7e11caced52"/>
+				<box>
+					<bottomPen lineWidth="0.0" lineStyle="Double"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Cambria" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Price]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="2" y="43" width="380" height="20" backcolor="#CCFFFF" uuid="5b92fed2-f60a-4b5e-afa7-6a09738cad97"/>
+				<box>
+					<bottomPen lineWidth="0.0" lineStyle="Double"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Cambria" isBold="false"/>
+				</textElement>
+				<text><![CDATA[ Engineer Fee]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="383" y="64" width="127" height="20" backcolor="#CCFFFF" uuid="52dad43f-ef58-4a4f-ad33-4b2be3e11a2d"/>
+				<textElement textAlignment="Right">
+					<font fontName="Cambria"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ticket_fee}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="2" y="64" width="380" height="20" backcolor="#CCFFFF" uuid="e3a70e3b-801d-4c35-8b5f-ab6386683805"/>
+				<box>
+					<bottomPen lineWidth="0.0" lineStyle="Double"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Cambria" isBold="false"/>
+				</textElement>
+				<text><![CDATA[ Ticket Fee]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="2" y="85" width="380" height="20" backcolor="#CCFFFF" uuid="4aedd8fb-aef6-4926-b687-68569789dfbc"/>
+				<box>
+					<bottomPen lineWidth="0.0" lineStyle="Double"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Cambria" isBold="false"/>
+				</textElement>
+				<text><![CDATA[ Transport Fee]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="383" y="85" width="127" height="20" backcolor="#CCFFFF" uuid="81e957c5-3e4e-4dec-a616-cba6617983be"/>
+				<textElement textAlignment="Right">
+					<font fontName="Cambria"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{transport_fee}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="2" y="106" width="380" height="20" backcolor="#CCFFFF" uuid="18d2f1c8-e793-41d8-913f-f949b15f128c"/>
+				<box>
+					<bottomPen lineWidth="0.0" lineStyle="Double"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Cambria" isBold="false"/>
+				</textElement>
+				<text><![CDATA[ Speedboat Fee]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="383" y="106" width="127" height="20" backcolor="#CCFFFF" uuid="a30a4c88-c8fb-4d99-87fb-da3864cb85f6"/>
+				<textElement textAlignment="Right">
+					<font fontName="Cambria"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{speedboat_fee}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement mode="Opaque" x="383" y="127" width="127" height="20" backcolor="#CCFFFF" uuid="dc56ca95-ce81-4f91-9586-a2f9b2edce79"/>
+				<textElement textAlignment="Right">
+					<font fontName="Cambria"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dailyallowance_fee}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="2" y="127" width="380" height="20" backcolor="#CCFFFF" uuid="2aaf6d95-6fb4-4de6-b330-a584efd76d38"/>
+				<box>
+					<bottomPen lineWidth="0.0" lineStyle="Double"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Cambria" isBold="false"/>
+				</textElement>
+				<text><![CDATA[ Daily Allowance]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="397" y="176" width="113" height="20" backcolor="#33CCFF" uuid="912037ce-af15-48df-b0ec-e0a391f9ad68"/>
+				<box>
+					<bottomPen lineWidth="0.0" lineStyle="Double"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Cambria" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Price]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="23" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="205" y="1" width="135" height="20" isRemoveLineWhenBlank="true" backcolor="#CCFFFF" uuid="9cfe48b4-9c5f-4a50-8f92-98969a30d1d9"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Cambria"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{task_equipment_type}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="2" y="1" width="201" height="20" isRemoveLineWhenBlank="true" backcolor="#CCFFFF" uuid="372dacba-843c-4bec-8296-64f37f5072d2"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Cambria"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{task_equipment_name}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="342" y="1" width="53" height="20" isRemoveLineWhenBlank="true" backcolor="#CCFFFF" uuid="c492e2ec-c22c-44f9-98f7-5ad73856d7bf"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement mode="Opaque" x="397" y="1" width="113" height="20" isRemoveLineWhenBlank="true" backcolor="#CCFFFF" uuid="4a7ef547-bc98-4ec9-a9a6-5b5efdeecfd7"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{price}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="81">
+			<staticText>
+				<reportElement x="1" y="0" width="240" height="20" uuid="fbb2e294-6514-4827-beb5-777eac4f7456"/>
+				<textElement textAlignment="Center">
+					<font fontName="Cambria" size="11" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Department Services]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="16" width="240" height="20" uuid="553251a3-0ac3-4d6c-9e8d-9946d1b0f4c1"/>
+				<textElement textAlignment="Center">
+					<font fontName="Cambria" size="11" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Date Of Issue, ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="61" width="240" height="20" uuid="066fc330-e410-4077-85ce-83c066d501bb"/>
+				<textElement textAlignment="Center">
+					<font fontName="Cambria" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Pudji]]></text>
+			</staticText>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="45">
+			<line>
+				<reportElement x="1" y="1" width="555" height="1" forecolor="#0099FF" uuid="cf4489fe-6e33-4808-acc1-876aaecfb697"/>
+			</line>
+			<staticText>
+				<reportElement x="0" y="4" width="552" height="38" uuid="ed403936-4818-4564-aba6-7cbd419d156c"/>
+				<textElement>
+					<font fontName="Cambria" size="8"/>
+				</textElement>
+				<text><![CDATA[Head office :
+Kalibata Indah No.9AM, Jl. Rawa Jati Timur – Pancoran Jakarta Selatan 12750
+Telp. +62 21 – 7991 909 (Hunting), 703 02071, Fax : +62 21 – 7991 930
+Website: www.kresnaadikarsa.co.id and e-mail: jrm@cbn.net.id / marketing@kresnaadikarsa.co.id
+]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="125">
+			<staticText>
+				<reportElement x="203" y="18" width="206" height="20" uuid="87266385-f1a9-4154-82bd-3da74758bd60"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Cambria" size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="414" y="18" width="12" height="20" uuid="d78bca13-dabe-4d33-8873-433fb28ae501"/>
+				<textElement>
+					<font fontName="Cambria" size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="414" y="39" width="12" height="20" uuid="31a849d8-b97b-4478-aab2-07c0883693ff"/>
+				<textElement>
+					<font fontName="Cambria" size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="203" y="39" width="206" height="20" uuid="42ea2ede-fe20-46e5-a314-0358bd5cfe22"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Cambria" size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[PPN 10%]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="428" y="39" width="85" height="20" uuid="fc82ea57-49be-4aa3-b385-6b0946043fff"/>
+				<textElement textAlignment="Right">
+					<font fontName="Cambria"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{price_1}==0? $F{ppn}:(($F{subtotal_personil}+$V{price_1})*0.1)]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="203" y="60" width="206" height="20" uuid="6e65b61d-3a8f-4d35-961d-2bc3def47111"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Cambria" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Grand Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="414" y="60" width="12" height="20" uuid="d2cfff99-af23-41e6-a51b-27322724ef96"/>
+				<textElement>
+					<font fontName="Cambria" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="3" y="0" width="512" height="1" backcolor="#0033FF" uuid="9760b8ab-736a-4b2c-9144-00368a9db2aa"/>
+			</line>
+			<line>
+				<reportElement x="3" y="-2" width="512" height="1" backcolor="#0033FF" uuid="00ea7dab-4ca5-42e2-ad02-5cfd3a491322"/>
+			</line>
+			<textField pattern="#,##0.00">
+				<reportElement x="428" y="60" width="85" height="20" uuid="448f91c2-5db8-40ed-90b7-4968cb057858"/>
+				<textElement textAlignment="Right">
+					<font fontName="Cambria" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{price_1} ==0? $F{grand_total} :$F{subtotal_personil}+$V{price_1}+(($F{subtotal_personil}+$V{price_1})* 0.1)]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="428" y="18" width="85" height="20" uuid="4ba2f1c7-e7f3-42bd-9317-b76256001124"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$V{price_1} ==0? $F{subtotal_personil}: $F{subtotal_personil}+$V{price_1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>
